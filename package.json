@@ -1,18 +1,18 @@
 {
-  "name": "ts-cli-starter",
-  "version": "1.0.3",
-  "description": "TypeScript CLI project template.",
+  "name": "sort-downloads",
+  "version": "0.1.0",
+  "description": "Sort downloaded files by filename and source URLs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
-  "bin": "dist/cli.js",
+  "bin": "dist/src/cli.js",
   "files": [
     "dist/"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node ./dist/index.js",
-    "lint": "eslint . --ext '.js,.jsx,.ts,.tsx,.md'",
+    "lint": "eslint . --ext '.js,.jsx,.ts,.tsx,.md' --fix",
     "prettier": "prettier -c --write '**/*'",
     "test": "jest --config jest.config.json --no-cache",
     "prepare": "npm run build && npm run lint && npm run prettier && npm run test"
@@ -41,6 +41,7 @@
   "homepage": "https://github.com/soulmachine/ts-cli-starter",
   "devDependencies": {
     "@types/figlet": "^1.5.4",
+    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.13",
     "@types/yargs": "^17.0.7",
@@ -60,8 +61,9 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "chalk": "^5.0.0",
+    "chalk": "^4.0.0",
     "figlet": "^1.5.2",
+    "fs-extra": "^11.1.1",
     "yargs": "^17.3.0"
   }
 }
