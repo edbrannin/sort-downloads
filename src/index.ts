@@ -1,9 +1,9 @@
 // import * as fs from 'fs/promises';
 import fs from 'fs-extra';
 
+import { join } from 'path';
 import { whereFrom } from './whereFrom';
 import getSorter from './sort';
-import { join } from 'path';
 
 // eslint-disable-next-line import/prefer-default-export
 export function myFunc(): void {
@@ -13,10 +13,30 @@ export function myFunc(): void {
 export type MainOpts = {
   dryRun: boolean;
   verbose: boolean;
+  report: boolean;
 };
 
-export const main = async ({ dryRun = true, verbose = true }: MainOpts) => {
+export const printDomainReport = (domainCounts: Map<string, number>): void => {
+  const countsAndValues = [...domainCounts.entries()]
+    .map(([domain, count]) => [count, domain] as [number, string])
+    .sort()
+    .map(([count, domain]) => [domain, count] as [string, number]);
+
+  console.log();
+  console.log('Count\tDomain');
+  countsAndValues.forEach(([domain, count]) => console.log(`${count}\t${domain}`));
+};
+
+export const main = async ({ dryRun = true, verbose = true, report = false }: MainOpts) => {
   const { sort, matcherCounts } = getSorter();
+
+  const domainCounts: Map<string, number> = new Map();
+  const incrementCount = (name: string) => {
+    if (report) {
+      domainCounts.set(name, (domainCounts.get(name) || 0) + 1);
+    }
+  };
+
   const dirPath = '.';
   const files = await fs.readdir(dirPath, { withFileTypes: true });
   console.log(`Looking at ${files.length} files`);
@@ -48,15 +68,24 @@ export const main = async ({ dryRun = true, verbose = true }: MainOpts) => {
             console.error(`Error moving "${name}" to "${destination}":`, err);
           }
         }
-      } else if (verbose) {
-        if (sourceUrls.length > 0) {
-          console.log(`No matcher for ${name} from:${sourceUrls.map((url) => `\n- ${url}`).join()}`);
-        } else {
-          // console.log(`No URLs for ${name}`)
+      } else if (sourceUrls.length > 0) {
+        if (verbose) {
+          console.log(
+            `No matcher for ${name} from:${sourceUrls.map((url) => `\n- ${url}`).join()}`,
+          );
         }
+        sourceUrls.forEach((url) => incrementCount(url.hostname));
+      } else {
+        // console.log("No URLs for ", name);
+        incrementCount('NO_URL');
       }
     }
   }
+
+  if (report) {
+    printDomainReport(domainCounts);
+  }
+
   console.log('Totals:');
   [...matcherCounts.entries()].forEach(([name, count]) => console.log(`${count}\t${name}`));
 };

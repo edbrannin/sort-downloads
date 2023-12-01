@@ -6,20 +6,17 @@ import yargs from 'yargs';
 import { main } from './index';
 
 const { argv } = yargs.options({
-// b: { type: 'string', demandOption: true },
-// c: { type: 'number', alias: 'chill' },
-// d: { type: 'array' },
-// e: { type: 'count' },
-// f: { choices: ['1', '2', '3'] },
-  d: { type: 'boolean', alias: 'dry-run', default: false },
-  v: { type: 'boolean', alias: 'verbose', default: false },
+  dryRun: { type: 'boolean', alias: 'd', default: false },
+  verbose: { type: 'boolean', alias: 'v', default: false },
+  report: { type: 'boolean', alias: 'r', default: false },
 });
 
 const mainArgs = async (inputs: typeof argv) => {
   const args = await inputs;
   main({
-    dryRun: args.d,
-    verbose: args.v,
+    dryRun: args.dryRun,
+    verbose: args.verbose,
+    report: args.report,
   });
 };
 
