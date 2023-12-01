@@ -67,13 +67,8 @@ const matchers: Record<string, MatchFunction> = {
   pnpArcadeMatcher,
 };
 
-type AsyncWrapper<T extends (...args: unknown[]) => unknown> = (
-  ...args: Parameters<T>
-) => Promise<ReturnType<T>>;
-
 type MatcherKey = keyof typeof matchers;
 type MatcherMap<T> = Map<MatcherKey, T>;
-export type SortFunction = AsyncWrapper<MatchFunction>;
 
 const getSorter = () => {
   const results = new Map<string, string>();
