@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { homedir } from 'os';
-import { join } from 'path';
+import { join, basename } from 'path';
 
 type MatchFunction = (path: string, url: URL) => string | undefined;
 
@@ -59,12 +59,21 @@ const pnpArcadeMatcher: MatchFunction = (_, url) => {
   return undefined;
 };
 
+const SAVEGAMES_DIR = join(homedir(), 'Dropbox', 'Fun', 'Gaming-video', 'Saves');
+const goobooMatcher: MatchFunction = (path, _) => {
+  if (basename(path).startsWith('Gooboo_') && path.endsWith('.txt')) {
+    return join(SAVEGAMES_DIR, 'Gooboo');
+  }
+  return undefined;
+};
+
 const matchers: Record<string, MatchFunction> = {
   itchMatcher,
   itchJamMatcher,
   print3dMatcher,
   gutenbergMatcher,
   pnpArcadeMatcher,
+  goobooMatcher,
 };
 
 type MatcherKey = keyof typeof matchers;
